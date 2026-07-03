@@ -145,6 +145,23 @@ h1 {
   background: rgba(255, 255, 255, 0.72);
 }
 
+.backup-panel {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.backup-panel button {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--accent-strong);
+  font-weight: 850;
+  cursor: pointer;
+}
+
 label span {
   color: var(--muted);
   font-size: 12px;

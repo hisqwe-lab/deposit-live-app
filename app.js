@@ -38,6 +38,9 @@ const els = {
   list: document.querySelector("#depositList"),
   template: document.querySelector("#depositTemplate"),
   add: document.querySelector("#addDeposit"),
+  exportBackup: document.querySelector("#exportBackup"),
+  importBackup: document.querySelector("#importBackup"),
+  backupFile: document.querySelector("#backupFile"),
   normalTaxRate: document.querySelector("#normalTaxRate"),
   preferredTaxRate: document.querySelector("#preferredTaxRate"),
   totalNetEarned: document.querySelector("#totalNetEarned"),
@@ -92,6 +95,65 @@ function loadState() {
 
 function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function normalizeState(data) {
+  if (!data || !Array.isArray(data.deposits)) {
+    throw new Error("Invalid backup data.");
+  }
+
+  return {
+    normalTaxRate: Number(data.normalTaxRate ?? defaults.normalTaxRate),
+    preferredTaxRate: Number(data.preferredTaxRate ?? defaults.preferredTaxRate),
+    deposits: data.deposits.map((deposit) => ({
+      id: deposit.id || crypto.randomUUID(),
+      name: String(deposit.name || "예금"),
+      principal: Number(deposit.principal) || 0,
+      rate: Number(deposit.rate) || 0,
+      termMonths: String(deposit.termMonths ?? "12"),
+      customTermMonths: Number(deposit.customTermMonths || 12),
+      maturityDate: deposit.maturityDate || toInputDate(addMonths(new Date(), 12)),
+      taxType: deposit.taxType === "preferred" ? "preferred" : "normal",
+      inputsHidden: Boolean(deposit.inputsHidden)
+    }))
+  };
+}
+
+function exportBackup() {
+  const payload = {
+    app: "deposit-live-app",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    ...state
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `deposit-live-backup-${toInputDate(new Date())}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importBackup(file) {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      const imported = normalizeState(JSON.parse(String(reader.result)));
+      if (!confirm("백업 파일의 내용으로 현재 예금 데이터를 바꿀까요?")) return;
+      state = imported;
+      saveState();
+      render();
+      alert("백업을 불러왔습니다.");
+    } catch (error) {
+      alert("백업 파일을 불러오지 못했습니다. 올바른 백업 파일인지 확인해주세요.");
+    } finally {
+      els.backupFile.value = "";
+    }
+  });
+  reader.readAsText(file);
 }
 
 function formatWon(value, maxFractionDigits = 0) {
@@ -283,6 +345,17 @@ els.add.addEventListener("click", () => {
   state.deposits.unshift(createDeposit());
   saveState();
   render();
+});
+
+els.exportBackup.addEventListener("click", exportBackup);
+
+els.importBackup.addEventListener("click", () => {
+  els.backupFile.click();
+});
+
+els.backupFile.addEventListener("change", () => {
+  const [file] = els.backupFile.files;
+  if (file) importBackup(file);
 });
 
 els.normalTaxRate.addEventListener("input", () => {

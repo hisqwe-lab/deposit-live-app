@@ -7,7 +7,7 @@
   <title>예금 수익 실시간 계산기</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <main class="app">
@@ -55,6 +55,12 @@
         <input id="preferredTaxRate" inputmode="decimal" type="number" min="0" max="100" step="0.1">
         <em>%</em>
       </label>
+    </section>
+
+    <section class="backup-panel" aria-label="백업">
+      <button id="exportBackup" type="button">백업 내보내기</button>
+      <button id="importBackup" type="button">백업 가져오기</button>
+      <input id="backupFile" type="file" accept="application/json,.json" hidden>
     </section>
 
     <section id="depositList" class="deposit-list" aria-label="예금 목록"></section>
@@ -149,10 +155,10 @@
     </article>
   </template>
 
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
   <script>
     if ("serviceWorker" in navigator && location.protocol !== "file:") {
-      navigator.serviceWorker.register("./sw.js?v=4").then((registration) => registration.update());
+      navigator.serviceWorker.register("./sw.js?v=5").then((registration) => registration.update());
     }
   </script>
 </body>
