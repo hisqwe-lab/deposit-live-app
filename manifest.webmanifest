@@ -1,0 +1,17 @@
+{
+  "name": "예금 수익 실시간 계산기",
+  "short_name": "예금수익",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f8faf7",
+  "theme_color": "#10231f",
+  "lang": "ko-KR",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#10231f">
+  <title>예금 수익 실시간 계산기</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Deposit Live</p>
+        <h1>예금 수익</h1>
+      </div>
+      <button class="icon-button" id="addDeposit" type="button" aria-label="예금 추가" title="예금 추가">+</button>
+    </header>
+
+    <section class="summary" aria-label="전체 요약">
+      <div class="summary-main">
+        <span>세후 누적 수익</span>
+        <strong id="totalNetEarned">0원</strong>
+      </div>
+      <div class="summary-grid">
+        <div>
+          <span>세전 누적</span>
+          <strong id="totalGrossEarned">0원</strong>
+        </div>
+        <div>
+          <span>세후 초당</span>
+          <strong id="totalNetPerSecond">0원/s</strong>
+        </div>
+        <div>
+          <span>만기 세후</span>
+          <strong id="totalNetAtMaturity">0원</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="tax-panel" aria-label="과세율 설정">
+      <label>
+        <span>일반과세</span>
+        <input id="normalTaxRate" inputmode="decimal" type="number" min="0" max="100" step="0.1">
+        <em>%</em>
+      </label>
+      <label>
+        <span>세금우대</span>
+        <input id="preferredTaxRate" inputmode="decimal" type="number" min="0" max="100" step="0.1">
+        <em>%</em>
+      </label>
+    </section>
+
+    <section id="depositList" class="deposit-list" aria-label="예금 목록"></section>
+  </main>
+
+  <template id="depositTemplate">
+    <article class="deposit-card">
+      <div class="card-head">
+        <input class="name-input" data-field="name" aria-label="예금명">
+        <button class="toggle-inputs-button" type="button" aria-label="입력 숨기기" title="입력 숨기기">⌃</button>
+        <button class="delete-button" type="button" aria-label="예금 삭제" title="예금 삭제">×</button>
+      </div>
+
+      <div class="live-row">
+        <div>
+          <span>세전</span>
+          <strong data-live="grossEarned">0원</strong>
+        </div>
+        <div>
+          <span>세후</span>
+          <strong data-live="netEarned">0원</strong>
+        </div>
+      </div>
+
+      <div class="per-second">
+        <span>초당 수익</span>
+        <strong><b data-live="grossPerSecond">0원/s</b> · <b data-live="netPerSecond">0원/s</b></strong>
+      </div>
+
+      <div class="progress-track" aria-hidden="true">
+        <div data-live="progressBar"></div>
+      </div>
+      <p class="progress-text" data-live="progressText">0.0% 진행</p>
+
+      <div class="form-grid" data-section="inputs">
+        <label>
+          <span>예치금액</span>
+          <input data-field="principal" inputmode="numeric" type="number" min="0" step="10000">
+        </label>
+        <label>
+          <span>연 이율</span>
+          <input data-field="rate" inputmode="decimal" type="number" min="0" step="0.01">
+        </label>
+        <label>
+          <span>가입기간</span>
+          <select data-field="termMonths">
+            <option value="1">1개월</option>
+            <option value="3">3개월</option>
+            <option value="6">6개월</option>
+            <option value="12">12개월</option>
+            <option value="24">24개월</option>
+            <option value="36">36개월</option>
+            <option value="custom">직접입력</option>
+          </select>
+        </label>
+        <label class="custom-term" hidden>
+          <span>개월 수</span>
+          <input data-field="customTermMonths" inputmode="numeric" type="number" min="1" step="1">
+        </label>
+        <label>
+          <span>만기일</span>
+          <input data-field="maturityDate" type="date">
+        </label>
+        <label>
+          <span>과세</span>
+          <select data-field="taxType">
+            <option value="normal">일반과세</option>
+            <option value="preferred">세금우대</option>
+          </select>
+        </label>
+      </div>
+
+      <dl class="detail-list">
+        <div>
+          <dt>가입일</dt>
+          <dd data-live="startDate">-</dd>
+        </div>
+        <div>
+          <dt>만기 세전</dt>
+          <dd data-live="grossAtMaturity">0원</dd>
+        </div>
+        <div>
+          <dt>만기 세후</dt>
+          <dd data-live="netAtMaturity">0원</dd>
+        </div>
+      </dl>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+  <script>
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("./sw.js");
+    }
+  </script>
+</body>
+</html>
