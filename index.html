@@ -7,7 +7,7 @@
   <title>예금 수익 실시간 계산기</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <main class="app">
@@ -149,10 +149,10 @@
     </article>
   </template>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=4"></script>
   <script>
     if ("serviceWorker" in navigator && location.protocol !== "file:") {
-      navigator.serviceWorker.register("./sw.js");
+      navigator.serviceWorker.register("./sw.js?v=4").then((registration) => registration.update());
     }
   </script>
 </body>
