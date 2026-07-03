@@ -42,6 +42,7 @@ const els = {
   preferredTaxRate: document.querySelector("#preferredTaxRate"),
   totalNetEarned: document.querySelector("#totalNetEarned"),
   totalGrossEarned: document.querySelector("#totalGrossEarned"),
+  totalPrincipal: document.querySelector("#totalPrincipal"),
   totalNetPerSecond: document.querySelector("#totalNetPerSecond"),
   totalNetAtMaturity: document.querySelector("#totalNetAtMaturity")
 };
@@ -196,6 +197,7 @@ function render() {
       card,
       toggleButton,
       customTerm,
+      principal: fragment.querySelector('[data-live="principal"]'),
       grossEarned: fragment.querySelector('[data-live="grossEarned"]'),
       netEarned: fragment.querySelector('[data-live="netEarned"]'),
       grossPerSecond: fragment.querySelector('[data-live="grossPerSecond"]'),
@@ -242,6 +244,7 @@ function updateLiveValues() {
   const now = new Date();
   let totalGrossEarned = 0;
   let totalNetEarned = 0;
+  let totalPrincipal = 0;
   let totalNetPerSecond = 0;
   let totalNetAtMaturity = 0;
 
@@ -250,11 +253,14 @@ function updateLiveValues() {
     if (!refs) return;
 
     const result = calculateDeposit(deposit, now);
+    const principal = Math.max(0, Number(deposit.principal) || 0);
+    totalPrincipal += principal;
     totalGrossEarned += result.grossEarned;
     totalNetEarned += result.netEarned;
     totalNetPerSecond += result.netPerSecond;
     totalNetAtMaturity += result.netAtMaturity;
 
+    refs.principal.textContent = formatWon(principal);
     refs.grossEarned.textContent = formatWon(result.grossEarned, 2);
     refs.netEarned.textContent = formatWon(result.netEarned, 2);
     refs.grossPerSecond.textContent = formatPerSecond(result.grossPerSecond);
@@ -268,6 +274,7 @@ function updateLiveValues() {
 
   els.totalGrossEarned.textContent = formatWon(totalGrossEarned, 2);
   els.totalNetEarned.textContent = formatWon(totalNetEarned, 2);
+  els.totalPrincipal.textContent = formatWon(totalPrincipal);
   els.totalNetPerSecond.textContent = formatPerSecond(totalNetPerSecond);
   els.totalNetAtMaturity.textContent = formatWon(totalNetAtMaturity);
 }
