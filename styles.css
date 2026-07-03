@@ -104,8 +104,8 @@ h1 {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
   margin-top: 18px;
 }
 
@@ -118,9 +118,9 @@ h1 {
 .summary-grid strong {
   display: block;
   margin-top: 4px;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.2;
-  word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 
 .tax-panel {
